@@ -35,4 +35,9 @@ v0.7
 
 - Ajout de la Route update /characters/{identier} + PUT
 
+v0.8
+
+- Ajout de la Route delete /characters/{identier} + DELETE
+- Modication des tests pour les rendre dynamiques
+
 - Core files

@@ -6,15 +6,29 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class CharacterControllerTest extends WebTestCase
 {
+    private $content; // Contenu de la réponse
+    private static $identifier; // Identifier du Character
     private $client;
     public function setUp(): void
     {
         $this->client = static::createClient();
     }
+    public function testCreate()
+    {
+        $this->client->request('POST', '/characters/');
+        $this->assertResponseCode(201);
+        $this->assertJsonResponse();
+        $this->defineIdentifier();
+        $this->assertIdentifier();
+    }
+
     public function testDisplay(): void
     {
         // $client->request('POST', '/characters/');
-        $this->client->request('GET', '/characters/cc10d47dbcd360f1024c46fb23b93b350cce9469');
+        $this->client->request('GET', '/characters/' . self::$identifier);
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+        $this->assertIdentifier();
 
         $this->assertJsonResponse($this->client->getResponse());
     }
@@ -22,6 +36,7 @@ class CharacterControllerTest extends WebTestCase
     public function assertJsonResponse()
     {
         $response = $this->client->getResponse();
+        $this->content = json_decode($response->getContent(), true, 50);
         $this->assertResponseIsSuccessful();
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json'), $response->headers);
     }
@@ -29,6 +44,7 @@ class CharacterControllerTest extends WebTestCase
     public function testIndex()
     {
         $this->client->request('GET', '/characters/');
+        $this->assertResponseCode(200);
         $this->assertJsonResponse();
     }
 
@@ -50,16 +66,31 @@ class CharacterControllerTest extends WebTestCase
         $this->assertError404();
     }
 
+    public function assertIdentifier()
+    {
+        $this->assertArrayHasKey('identifier', $this->content);
+    }
+    // Defines identifier
+    public function defineIdentifier()
+    {
+        self::$identifier = $this->content['identifier'];
+    }
+    
     public function testUpdate()
     {
-        $this->client->request('PUT', '/characters/04f3ca95307f91117321cfddaa5058ce8c9cd824');
-        $this->assertResponseCode204();
+        $this->client->request('PUT', '/characters/' . self::$identifier);
+        $this->assertResponseCode(204);
     }
-    // Asserts that Response code is 204
-    public function assertResponseCode204()
+    // Asserts that Response code is equal to $code
+    public function assertResponseCode(int $code)
     {
         $response = $this->client->getResponse();
-        $this->assertEquals(204, $response->getStatusCode());
+        $this->assertEquals($code, $response->getStatusCode());
     }
 
+    public function testDelete()
+    {
+        $this->client->request('DELETE', '/characters/' . self::$identifier);
+        $this->assertResponseCode(204);
+    }
 }

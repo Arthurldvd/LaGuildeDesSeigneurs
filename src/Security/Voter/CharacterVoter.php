@@ -11,8 +11,10 @@ use App\Entity\Character;
 
 class CharacterVoter extends Voter
 {
+    public const CHARACTER_CREATE = 'characterCreate';
     public const CHARACTER_INDEX = 'characterIndex';
     public const CHARACTER_UPDATE = 'characterUpdate';
+    public const CHARACTER_DELETE = 'characterDelete';
 
    // Checks if is allowed to create
     private function canCreate($token, $subject)
@@ -20,7 +22,6 @@ class CharacterVoter extends Voter
         return true;
     }
 
-    public const CHARACTER_CREATE = 'characterCreate';
     // Checks if is allowed to display
     private function canDisplay($token, $subject)
     {
@@ -32,6 +33,8 @@ class CharacterVoter extends Voter
             self::CHARACTER_DISPLAY,
             self::CHARACTER_INDEX,
             self::CHARACTER_UPDATE,
+            self::CHARACTER_DELETE,
+
         );
 
 
@@ -58,6 +61,9 @@ class CharacterVoter extends Voter
             case self::CHARACTER_UPDATE:
                 return $this->canUpdate($token, $subject);
                 break;
+            case self::CHARACTER_DELETE:
+                return $this->canUpdate($token, $subject);
+                break;
         }
 
         throw new LogicException('Invalid attribute: ' . $attribute);
@@ -68,4 +74,9 @@ class CharacterVoter extends Voter
     {
         return true;
     }
+
+   private function canDelete($token, $subject)
+   {
+       return true;
+   }
 }
