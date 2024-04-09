@@ -7,6 +7,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CharacterRepository::class)]
+#[ORM\Table(name: '`character`')]
 class Character
 {
     #[ORM\Id]
@@ -15,31 +16,31 @@ class Character
     private ?int $id = 1;
 
     #[ORM\Column(length: 20)]
-    private ?string $name = 'Dagnir';
+    private ?string $name;
 
     #[ORM\Column(length: 50)]
-    private ?string $surname = 'Tourmenteur';
+    private ?string $surname;
 
     #[ORM\Column(length: 20, nullable: true)]
-    private ?string $caste = 'ElfeNoir';
+    private ?string $caste = null;
 
     #[ORM\Column(length: 20, nullable: true)]
-    private ?string $knowledge = 'Arts';
+    private ?string $knowledge = null ;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $intelligence = 160;
+    private ?int $intelligence = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $strength = 1600;
+    private ?int $strength = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $image = '/dagnir/dagnir.webp';
+    private ?string $image = null;
 
     #[ORM\Column(length: 20)]
-    private ?string $slug = null;
+    private ?string $slug;
 
     #[ORM\Column(length: 20)]
-    private ?string $kind = null;
+    private ?string $kind;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $creation = null;
