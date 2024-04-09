@@ -44,13 +44,16 @@ v0.8.1
 
 - Ajout des fixtures
 
-V 0.9 
+V 0.8.2
 
 - Ajout champs modification + migration
 
-V 0.10
+V 0.9
 
 - Ajout de la table Building avec le crud et les tests et l'authentification
 
+V 0.10
+
+- Mise en place de Form pour Character
 
 - Core files
