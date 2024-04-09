@@ -16,6 +16,10 @@ v0.3
 - Ajout de la route create character
 - Ajout de la sauvegarde en base de données
 
+v0.4
 
+- Ajout des identiers
+- Modication de la route display character
+- Utilisation du fetch automatique
 
 - Core files

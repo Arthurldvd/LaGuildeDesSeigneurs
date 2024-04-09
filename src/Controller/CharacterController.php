@@ -14,16 +14,31 @@ class CharacterController extends AbstractController
     public function __construct(
         private CharacterServiceInterface $characterService
     ) {}
-<<<<<<< HEAD
 
     #[Route('/characters/', name: 'app_character_create', methods: ['POST'])]
-=======
-    
-    #[Route('/characters', name: 'app_character_create', methods: ['POST'])]
->>>>>>> dev
     public function create(): JsonResponse
     {
         $character = $this->characterService->create();
-        return new JsonResponse($character->toArray(), JsonResponse::HTTP_CREATED);
+        $response = new JsonResponse($character->toArray(), JsonResponse::HTTP_CREATED);
+        $url = $this->generateUrl(
+            'app_character_display',
+            ['identifier' => $character->getIdentifier()]
+        );
+        $response->headers->set('Location', $url);
+        return $response;
     }
+
+    #[
+                Route(
+                    '/characters/{identifier}',
+                    requirements: ['identifier' => '^([a-z0-9]{40})$'],
+                    name: 'app_character_display',
+                    methods: ['GET']
+                )
+            ]
+            public function display(Character $character): JsonResponse
+            {
+                return new JsonResponse($character->toArray());
+            }
+
 }

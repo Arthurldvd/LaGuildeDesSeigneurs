@@ -5,12 +5,15 @@ namespace App\Service;
 use DateTime; // on ajoute le use pour supprimer le \ dans setCreation()
 use App\Entity\Character;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\CharacterRepository;
 
 class CharacterService implements CharacterServiceInterface
 {
     public function __construct(
-        private EntityManagerInterface $em
+            private EntityManagerInterface $em,
+            private CharacterRepository $characterRepository
         ) {}
+
     // Creates the character
     public function create(): Character
     {
