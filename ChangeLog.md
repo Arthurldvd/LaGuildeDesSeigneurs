@@ -26,6 +26,9 @@ v0.5
 
 - Ajout des Voters
 
+v0.6
 
+- Ajout d'une Route index
+- Ajout de tests négatifs
 
 - Core files

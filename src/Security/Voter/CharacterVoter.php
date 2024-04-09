@@ -11,6 +11,8 @@ use App\Entity\Character;
 
 class CharacterVoter extends Voter
 {
+    public const CHARACTER_INDEX = 'characterIndex';
+
    // Checks if is allowed to create
     private function canCreate($token, $subject)
     {
@@ -27,6 +29,7 @@ class CharacterVoter extends Voter
         private const ATTRIBUTES = array(
             self::CHARACTER_CREATE,
             self::CHARACTER_DISPLAY,
+            self::CHARACTER_INDEX
         );
 
 
@@ -45,6 +48,9 @@ class CharacterVoter extends Voter
                 return $this->canCreate($token, $subject);
                 break;
             case self::CHARACTER_DISPLAY:
+                return $this->canDisplay($token, $subject);
+                break;
+            case self::CHARACTER_INDEX:
                 return $this->canDisplay($token, $subject);
                 break;
         }

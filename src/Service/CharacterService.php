@@ -14,6 +14,15 @@ class CharacterService implements CharacterServiceInterface
             private CharacterRepository $characterRepository
         ) {}
 
+        public function findAll(): array
+        {
+            $charactersFinal = array();
+            $characters = $this->characterRepository->findAll();
+            foreach ($characters as $character) {
+                $charactersFinal[] = $character->toArray();
+            }
+            return $charactersFinal;
+        }
     // Creates the character
     public function create(): Character
     {
