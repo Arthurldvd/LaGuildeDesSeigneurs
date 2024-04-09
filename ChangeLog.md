@@ -44,4 +44,13 @@ v0.8.1
 
 - Ajout des fixtures
 
+V 0.9 
+
+- Ajout champs modification + migration
+
+V 0.10
+
+- Ajout de la table Building avec le crud et les tests et l'authentification
+
+
 - Core files

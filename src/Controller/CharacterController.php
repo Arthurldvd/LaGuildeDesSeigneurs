@@ -19,7 +19,7 @@ class CharacterController extends AbstractController
     #[Route('/characters/', name: 'app_character_create', methods: ['POST'])]
     public function create(): JsonResponse
     {
-        $this->denyAccessUnlessGranted('characterCreate', null);
+        // $this->denyAccessUnlessGranted('characterCreate', null);
         $character = $this->characterService->create();
         $response = new JsonResponse($character->toArray(), JsonResponse::HTTP_CREATED);
         $url = $this->generateUrl(

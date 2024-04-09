@@ -37,6 +37,7 @@ class CharacterService implements CharacterServiceInterface
         $character->setStrength(1600);
         $character->setImage('/elfesnoir/dagnir.webp');
         $character->setCreation(new \DateTime());
+        $character->setModification(new \DateTime());
         $character->setIdentifier(hash('sha1', uniqid()));
         $this->em->persist($character);
         $this->em->flush();
