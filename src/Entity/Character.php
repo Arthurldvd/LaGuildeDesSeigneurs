@@ -48,6 +48,9 @@ class Character
     #[ORM\Column(length: 40)]
     private ?string $identifier = null;
 
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    private ?\DateTimeInterface $modification = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -186,6 +189,18 @@ class Character
     public function setIdentifier(string $identifier): static
     {
         $this->identifier = $identifier;
+
+        return $this;
+    }
+
+    public function getModification(): ?\DateTimeInterface
+    {
+        return $this->modification;
+    }
+
+    public function setModification(?\DateTimeInterface $modification): static
+    {
+        $this->modification = $modification;
 
         return $this;
     }

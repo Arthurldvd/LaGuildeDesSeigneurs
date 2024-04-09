@@ -40,4 +40,8 @@ v0.8
 - Ajout de la Route delete /characters/{identier} + DELETE
 - Modication des tests pour les rendre dynamiques
 
+v0.8.1
+
+- Ajout des fixtures
+
 - Core files

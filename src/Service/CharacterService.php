@@ -54,6 +54,7 @@ class CharacterService implements CharacterServiceInterface
         $character->setIntelligence(140);
         $character->setStrength(140);
         $character->setImage('/seigneurs/gorthol.webp');
+        $character->setModification(new \DateTime());
         // $character->setIdentifier(hash('sha1', uniqid())) -> supprimé pour ne pas le changer
         $this->em->persist($character);
         $this->em->flush();
