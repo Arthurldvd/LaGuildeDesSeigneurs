@@ -31,4 +31,8 @@ v0.6
 - Ajout d'une Route index
 - Ajout de tests négatifs
 
+v0.7
+
+- Ajout de la Route update /characters/{identier} + PUT
+
 - Core files

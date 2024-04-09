@@ -12,6 +12,7 @@ use App\Entity\Character;
 class CharacterVoter extends Voter
 {
     public const CHARACTER_INDEX = 'characterIndex';
+    public const CHARACTER_UPDATE = 'characterUpdate';
 
    // Checks if is allowed to create
     private function canCreate($token, $subject)
@@ -29,7 +30,8 @@ class CharacterVoter extends Voter
         private const ATTRIBUTES = array(
             self::CHARACTER_CREATE,
             self::CHARACTER_DISPLAY,
-            self::CHARACTER_INDEX
+            self::CHARACTER_INDEX,
+            self::CHARACTER_UPDATE,
         );
 
 
@@ -53,8 +55,17 @@ class CharacterVoter extends Voter
             case self::CHARACTER_INDEX:
                 return $this->canDisplay($token, $subject);
                 break;
+            case self::CHARACTER_UPDATE:
+                return $this->canUpdate($token, $subject);
+                break;
         }
 
         throw new LogicException('Invalid attribute: ' . $attribute);
+    }
+
+    // Checks if is allowed to update
+    private function canUpdate($token, $subject)
+    {
+        return true;
     }
 }
