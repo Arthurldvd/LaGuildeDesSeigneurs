@@ -22,4 +22,10 @@ v0.4
 - Modication de la route display character
 - Utilisation du fetch automatique
 
+v0.5
+
+- Ajout des Voters
+
+
+
 - Core files

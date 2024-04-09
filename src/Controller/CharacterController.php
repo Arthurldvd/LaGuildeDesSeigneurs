@@ -8,6 +8,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Character;
 use App\Service\CharacterServiceInterface;
 
+
 class CharacterController extends AbstractController
 {
 
@@ -18,6 +19,7 @@ class CharacterController extends AbstractController
     #[Route('/characters/', name: 'app_character_create', methods: ['POST'])]
     public function create(): JsonResponse
     {
+        $this->denyAccessUnlessGranted('characterCreate', null);
         $character = $this->characterService->create();
         $response = new JsonResponse($character->toArray(), JsonResponse::HTTP_CREATED);
         $url = $this->generateUrl(
@@ -29,16 +31,17 @@ class CharacterController extends AbstractController
     }
 
     #[
-                Route(
-                    '/characters/{identifier}',
-                    requirements: ['identifier' => '^([a-z0-9]{40})$'],
-                    name: 'app_character_display',
-                    methods: ['GET']
-                )
-            ]
-            public function display(Character $character): JsonResponse
-            {
-                return new JsonResponse($character->toArray());
-            }
+        Route(
+            '/characters/{identifier}',
+            requirements: ['identifier' => '^([a-z0-9]{40})$'],
+            name: 'app_character_display',
+            methods: ['GET']
+        )
+    ]
+    public function display(Character $character): JsonResponse
+    {
+        $this->denyAccessUnlessGranted('characterDisplay', $character);
+        return new JsonResponse($character->toArray());
+    }
 
 }
