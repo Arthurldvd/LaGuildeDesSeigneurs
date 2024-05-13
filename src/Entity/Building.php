@@ -3,8 +3,11 @@
 namespace App\Entity;
 
 use App\Repository\BuildingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BuildingRepository::class)]
 #[ORM\Table(name: '`building`')]
@@ -16,24 +19,47 @@ class Building
     private ?int $id = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotNull] // Pour que ce ne soit pas null
+    #[Assert\NotBlank] // Pour que ce ne soit pas blanc
+    #[Assert\Length( //Définit une taille mini et maxi
+    min: 3,
+    max: 20, // Messages pour customisation, sinon on peut les supprimer
+    )]
     private ?string $name = null;
 
-    #[ORM\Column(length: 50, nullable: true)]
+    #[ORM\Column(length: 20)]
+    #[Assert\NotNull]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+    min: 3,
+    max: 20,
+    )]
     private ?string $slug = null;
 
     #[ORM\Column(length: 40, nullable: true)]
     private ?string $caste = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[Assert\PositiveOrZero]
     private ?int $strength = null;
 
     #[ORM\Column(length: 100, nullable: true)]
+    #[Assert\Length(
+        min: 5,
+        max: 50,
+        )]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $note = null;
 
     #[ORM\Column(length: 40)]
+    #[Assert\NotNull]
+   #[Assert\NotBlank]
+   #[Assert\Length(
+   min: 40, // si on veut une taille fixe il suffit
+   max: 40, // de mettre la même valeur pour min et max
+)]
     private ?string $identifier = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
@@ -41,6 +67,17 @@ class Building
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $updated_at = null;
+
+    /**
+     * @var Collection<int, Character>
+     */
+    #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'building')]
+    private Collection $characters;
+
+    public function __construct()
+    {
+        $this->characters = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -156,6 +193,36 @@ class Building
     public function setUpdatedAt(?\DateTimeInterface $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Character>
+     */
+    public function getCharacters(): Collection
+    {
+        return $this->characters;
+    }
+
+    public function addCharacter(Character $character): static
+    {
+        if (!$this->characters->contains($character)) {
+            $this->characters->add($character);
+            $character->setBuilding($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCharacter(Character $character): static
+    {
+        if ($this->characters->removeElement($character)) {
+            // set the owning side to null (unless already changed)
+            if ($character->getBuilding() === $this) {
+                $character->setBuilding(null);
+            }
+        }
 
         return $this;
     }

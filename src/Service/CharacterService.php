@@ -10,13 +10,15 @@ use LogicException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Cocur\Slugify\Slugify;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class CharacterService implements CharacterServiceInterface
 {
     public function __construct(
         private EntityManagerInterface $em,
         private CharacterRepository $characterRepository,
-        private FormFactoryInterface $formFactory
+        private FormFactoryInterface $formFactory,
+        private ValidatorInterface $validator,
     ) {}
 
     public function create(string $data): Character
@@ -70,15 +72,10 @@ class CharacterService implements CharacterServiceInterface
 
     public function isEntityFilled(Character $character)
     {
-        if (null === $character->getKind() ||
-            null === $character->getName() ||
-            null === $character->getSurname() ||
-            null === $character->getSlug() ||
-            null === $character->getIdentifier() ||
-            null === $character->getCreation() ||
-            null === $character->getModification()
-        ) {
-            $errorMsg = 'Missing data for Entity -> ' . json_encode($character->toArray());
+        $errors = $this->validator->validate($character);
+        if (count($errors) > 0) {
+            $errorMsg = (string) $errors . 'Wrong data for Entity -> ';
+            $errorMsg .= json_encode($character->toArray());
             throw new UnprocessableEntityHttpException($errorMsg);
         }
     }
