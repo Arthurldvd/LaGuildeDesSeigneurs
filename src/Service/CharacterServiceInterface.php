@@ -20,4 +20,6 @@ interface CharacterServiceInterface
 
     public function delete(Character $character);
 
+    public function serializeJson($object);
+
 }

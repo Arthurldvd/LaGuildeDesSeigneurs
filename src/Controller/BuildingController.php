@@ -8,13 +8,15 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Building;
 use App\Service\BuildingServiceInterface;
 use Symfony\Component\HttpFoundation\Request;
-
+use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
+use App\Repository\BuildingRepository;
 
 class BuildingController extends AbstractController
 {
 
     public function __construct(
-        private BuildingServiceInterface $buildingService
+        private BuildingServiceInterface $buildingService,
     ) {}
 
     #[Route('/buildings/', name: 'app_building_create', methods: ['POST'])]
@@ -22,7 +24,7 @@ class BuildingController extends AbstractController
     {
         $this->denyAccessUnlessGranted('buildingCreate', null);
         $building = $this->buildingService->create($request->getContent());
-        $response = new JsonResponse($building->toArray(), JsonResponse::HTTP_CREATED);
+            $response = JsonResponse::fromJsonString($this->buildingService->serializeJson($building), JsonResponse::HTTP_CREATED);
         $url = $this->generateUrl(
             'app_building_display',
             ['identifier' => $building->getIdentifier()]
@@ -39,10 +41,17 @@ class BuildingController extends AbstractController
             methods: ['GET']
         )
     ]
-    public function display(Building $building): JsonResponse
+    public function display(
+         #[MapEntity(expr: 'repository.findOneByIdentifier(identifier)')]
+         Building $building
+         ): JsonResponse
     {
         $this->denyAccessUnlessGranted('buildingDisplay', $building);
-        return new JsonResponse($building->toArray());
+        // On est toujours dans la classe JsonResponse
+        // Mais on l'utilise de manière statique
+        // d'où l'utilisation des ::
+        // et on appelle la méthode fromJsonString()
+        return JsonResponse::fromJsonString($this->buildingService->serializeJson($building));
     }
 
     //  INDEX
@@ -55,7 +64,7 @@ class BuildingController extends AbstractController
     {
         $this->denyAccessUnlessGranted('buildingIndex', null);
         $buildings = $this->buildingService->findAll();
-        return new JsonResponse($buildings);
+        return JsonResponse::fromJsonString($this->buildingService->serializeJson($buildings));
     }
 
     #[
@@ -83,4 +92,6 @@ class BuildingController extends AbstractController
         $building = $this->buildingService->delete($building);
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
+
+
 }

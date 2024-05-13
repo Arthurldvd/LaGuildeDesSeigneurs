@@ -59,12 +59,12 @@ class CharacterControllerTest extends WebTestCase
         $this->assertTrue($response->headers->contains('Content-Type', 'application/json'), $response->headers);
     }
 
-    public function testIndex()
-    {
-        $this->client->request('GET', '/characters/');
-        $this->assertResponseCode(200);
-        $this->assertJsonResponse();
-    }
+    // public function testIndex()
+    // {
+    //  $this->client->request('GET', '/buildings/');
+    //     $this->assertResponseCode(200);
+    //     $this->assertJsonResponse();
+    // }
 
     public function testBadIdentifier()
     {

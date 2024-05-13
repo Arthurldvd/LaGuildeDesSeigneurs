@@ -17,4 +17,7 @@ interface BuildingServiceInterface
 
     public function delete(Building $building);
 
+    // Serializes the object(s)
+  public function serializeJson($object);
+
 }

@@ -12,6 +12,11 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Cocur\Slugify\Slugify;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 class BuildingService implements BuildingServiceInterface
 {
@@ -22,14 +27,24 @@ class BuildingService implements BuildingServiceInterface
             private ValidatorInterface $validator,
         ) {}
 
+        // Serializes the object(s)
+        public function serializeJson($object)
+        {
+        $encoders = new JsonEncoder();
+        $defaultContext = [
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+            return $object->getId(); // Ce qu'il doit retourner
+            },
+            ];
+        $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
+        return $serializer->serialize($object, 'json');
+        }
+
         public function findAll(): array
         {
-            $buildingsFinal = array();
-            $buildings = $this->buildingRepository->findAll();
-            foreach ($buildings as $building) {
-                $buildingsFinal[] = $building->toArray();
-            }
-            return $buildingsFinal;
+            // On en n'a plus besoin car la sérialisation est récursive
+            return $this->buildingRepository->findAll();
         }
     // Creates the building
     public function create(string $data): Building
@@ -88,7 +103,7 @@ class BuildingService implements BuildingServiceInterface
         $errors = $this->validator->validate($building);
         if (count($errors) > 0) {
             $errorMsg = (string) $errors . 'Wrong data for Entity -> ';
-            $errorMsg .= json_encode($building->toArray());
+            $errorMsg .= json_encode($this->serializeJson($building));
             throw new UnprocessableEntityHttpException($errorMsg);
         }
         }
