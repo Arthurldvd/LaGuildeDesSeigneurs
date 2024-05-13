@@ -4,14 +4,16 @@ use App\Entity\Building;
 
 interface BuildingServiceInterface
 {
-    // Creates the character
-    public function create();
+    // Creates the building
+    public function create(string $data);
+    public function isEntityFilled(Building $building);
+    public function submit(Building $building, $formName, $data);
 
-    // Finds all the characters
+    // Finds all the buildings
     public function findAll();
 
-    // Modifies the character
-    public function update(Building $building);
+    // Modifies the building
+    public function update(Building $building, string $data);
 
     public function delete(Building $building);
 

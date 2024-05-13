@@ -3,9 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Building;
-use Doctrine\DBAL\Types\DateTimeType;
-use Doctrine\DBAL\Types\IntegerType;
-use Doctrine\DBAL\Types\TextType;
+use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -22,10 +22,10 @@ class BuildingType extends AbstractType
             ->add('image', TextType::class)
             ->add('note', IntegerType::class)
             ->add('identifier', TextType::class)
-            ->add('creation', DateTimeType::class, [
+            ->add('created_at', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
-            ->add('modification', DateTimeType::class, [
+            ->add('updated_at', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
         ;

@@ -1,17 +1,23 @@
 <?php
 
-//src/Service/CharacterService.php
+//src/Service/BuildingService.php
 namespace App\Service;
 use DateTime; 
 use App\Entity\Building;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BuildingRepository;
+use App\Form\BuildingType;
+use LogicException;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Cocur\Slugify\Slugify;
 
 class BuildingService implements BuildingServiceInterface
 {
     public function __construct(
             private EntityManagerInterface $em,
-            private BuildingRepository $buildingRepository
+            private BuildingRepository $buildingRepository,
+            private FormFactoryInterface $formFactory,
         ) {}
 
         public function findAll(): array
@@ -23,33 +29,28 @@ class BuildingService implements BuildingServiceInterface
             }
             return $buildingsFinal;
         }
-    // Creates the character
-    public function create(): Building
+    // Creates the building
+    public function create(string $data): Building
     {
         $building = new Building();
-        $building->setName('Chateau DirenWood');
-        $building->setSlug('chateau-direnwood');
-        $building->setCaste('ElfeNoir');  
-        $building->setCreatedAt(new \DateTime());
-        $building->setUpdatedAt(new \DateTime());
-        $building->setStrength(15000);
-        $building->setImage('/castle/direnwood.webp');
-        $building->setNote(3);
+        $this->submit($building, BuildingType::class, $data);
+        $building->setSlug((new Slugify())->slugify($building->getName()));
+        
+       
         $building->setIdentifier(hash('sha1', uniqid()));
-      
+        $building->setCreatedAt(new DateTime());
+        $building->setUpdatedAt(new \DateTime());
+        $this->isEntityFilled($building);
         $this->em->persist($building);
         $this->em->flush();
         return $building;
     }
 
-    public function update(Building $building): Building
+    public function update(Building $building, string $data): Building
     {
-        $building->setName('Chateau Lenora');
-        $building->setSlug('chateau-lenora');
-        $building->setCaste('Guerrier');
-        $building->setStrength(1000);
-        $building->setImage('/castle/lenora.webp');
-        $building->setNote(3);
+        $this->submit($building, BuildingType::class, $data);
+        $building->setSlug((new Slugify())->slugify($building->getName()));
+        $building->setUpdatedAt(new \DateTime());
         $building->setUpdatedAt(new \DateTime());
         $this->em->persist($building);
         $this->em->flush();
@@ -61,4 +62,37 @@ class BuildingService implements BuildingServiceInterface
         $this->em->remove($building);
         $this->em->flush();
     }
+
+    public function submit(Building $building, $formName, $data)
+        {
+        $dataArray = is_array($data) ? $data : json_decode($data, true);
+        // Bad array
+        if (null !== $data && !is_array($dataArray)) {
+        throw new UnprocessableEntityHttpException('Submitted data is not an array -> ' . $data);
+        }
+        // Submits form
+        $form = $this->formFactory->create($formName, $building, ['csrf_protection' => false]);
+        $form->submit($dataArray, false);
+        $errors = $form->getErrors();
+        foreach ($errors as $error) {
+        $errorMsg = 'Error ' . get_class($error->getCause());
+        $errorMsg .= ' --> ' . $error->getMessageTemplate();
+        $errorMsg .= ' ' . json_encode($error->getMessageParameters());
+        throw new LogicException($errorMsg);
+        }
+    }
+    public function isEntityFilled(Building $building)
+        {
+        if (null === $building->getName() ||
+        null === $building->getCaste() ||
+        null === $building->getStrength() ||
+        null === $building->getSlug() ||
+        null === $building->getIdentifier() ||
+        null === $building->getCreatedAt() ||
+        null === $building->getUpdatedAt()
+        ) {
+        $errorMsg = 'Missing data for Entity -> ' . json_encode($building->toArray());
+        throw new UnprocessableEntityHttpException($errorMsg);
+        }
+        }
 }

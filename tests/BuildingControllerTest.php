@@ -15,7 +15,21 @@ class BuildingControllerTest extends WebTestCase
     }
     public function testCreate()
     {
-        $this->client->request('POST', '/buildings/');
+         $this->client->request(
+            'POST',
+            '/buildings/',
+            array(),// Parameters
+            array(),// Files
+            array('CONTENT_TYPE' => 'application/json'),// Server
+            <<<JSON
+            {
+            "name": "Château Silken",
+            "caste": "Archer",
+            "image": "/buildings/chateau-silken.webp",
+            "strength": 1200
+            }
+            JSON
+            );
         $this->assertResponseCode(201);
         $this->assertJsonResponse();
         $this->defineIdentifier();
@@ -77,7 +91,20 @@ class BuildingControllerTest extends WebTestCase
 
     public function testUpdate()
     {
-        $this->client->request('PUT', '/buildings/' . self::$identifier);
+       // Tests partial content
+ $this->client->request(
+    'PUT',
+    '/buildings/' . self::$identifier,
+    array(),// Parameters
+    array(),// Files
+    array('CONTENT_TYPE' => 'application/json'),// Server
+    <<<JSON
+    {
+    "name": "Château Oakenfield",
+    "caste": "Erudit"
+    }
+    JSON
+    );
         $this->assertResponseCode(204);
     }
     // Asserts that Response code is equal to $code
