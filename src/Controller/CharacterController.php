@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpKernel\Attribute\Cache;
 
 class CharacterController extends AbstractController
 {
@@ -48,6 +49,7 @@ class CharacterController extends AbstractController
         required: true
         )]
     #[OA\Tag(name: 'Character')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(Request $request): JsonResponse
     {
         $characters = $this->characterService->findAllPaginated($request->query);
@@ -82,6 +84,7 @@ class CharacterController extends AbstractController
         description: 'Not found'
     )]
     #[OA\Tag(name: 'Character')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function display(
         #[MapEntity(expr: 'repository.findOneByIdentifier(identifier)')]
         Character $character

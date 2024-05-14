@@ -68,3 +68,5 @@ v0.15.1
 v0.16
 ✓Mise en place de la pagination
 
+v0.16.1
+✓Mise en place du cache

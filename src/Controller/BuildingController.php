@@ -11,6 +11,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
+use Symfony\Component\HttpKernel\Attribute\Cache;
+
 
 class BuildingController extends AbstractController
 {
@@ -91,6 +93,7 @@ class BuildingController extends AbstractController
         description: 'Not found'
     )]
     #[OA\Tag(name: 'Building')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function display(
         #[MapEntity(expr: 'repository.findOneByIdentifier(identifier)')]
         Building $building
@@ -115,10 +118,11 @@ class BuildingController extends AbstractController
         description: 'Access denied'
     )]
     #[OA\Tag(name: 'Building')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
     public function index(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('buildingIndex', null);
-        $buildings = $this->buildingService->findAll();
+        $buildings = $this->buildingService->findAllPaginated($request->query);
         return JsonResponse::fromJsonString($this->buildingService->serializeJson($buildings));
     }
 
