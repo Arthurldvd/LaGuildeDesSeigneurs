@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use LogicException;
 use App\Entity\Building;
 
-
 class BuildingVoter extends Voter
 {
     public const BUILDING_CREATE = 'buildingCreate';
@@ -18,7 +17,7 @@ class BuildingVoter extends Voter
     public const BUILDING_DISPLAY = 'buildingDisplay';
 
 
-   // Checks if is allowed to create
+    // Checks if is allowed to create
     private function canCreate($token, $subject)
     {
         return true;
@@ -29,21 +28,21 @@ class BuildingVoter extends Voter
     {
         return true;
     }
-        private const ATTRIBUTES = array(
-            self::BUILDING_CREATE,
-            self::BUILDING_DISPLAY,
-            self::BUILDING_INDEX,
-            self::BUILDING_UPDATE,
-            self::BUILDING_DELETE,
-        );
+    private const ATTRIBUTES = array(
+        self::BUILDING_CREATE,
+        self::BUILDING_DISPLAY,
+        self::BUILDING_INDEX,
+        self::BUILDING_UPDATE,
+        self::BUILDING_DELETE,
+    );
 
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-         if (null !== $subject) {
-                 return $subject instanceof Building && in_array($attribute, self::ATTRIBUTES);
-             }
-             return in_array($attribute, self::ATTRIBUTES);
+        if (null !== $subject) {
+            return $subject instanceof Building && in_array($attribute, self::ATTRIBUTES);
+        }
+        return in_array($attribute, self::ATTRIBUTES);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -51,19 +50,14 @@ class BuildingVoter extends Voter
         switch ($attribute) {
             case self::BUILDING_CREATE:
                 return $this->canCreate($token, $subject);
-                break;
             case self::BUILDING_DISPLAY:
                 return $this->canDisplay($token, $subject);
-                break;
             case self::BUILDING_INDEX:
                 return $this->canDisplay($token, $subject);
-                break;
             case self::BUILDING_UPDATE:
                 return $this->canUpdate($token, $subject);
-                break;
             case self::BUILDING_DELETE:
-                return $this->canUpdate($token, $subject);
-                break;
+                return $this->canDelete($token, $subject);
         }
 
         throw new LogicException('Invalid attribute: ' . $attribute);
@@ -75,8 +69,8 @@ class BuildingVoter extends Voter
         return true;
     }
 
-   private function canDelete($token, $subject)
-   {
-       return true;
-   }
+    private function canDelete($token, $subject)
+    {
+        return true;
+    }
 }

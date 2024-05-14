@@ -1,8 +1,10 @@
 <?php
 
 //src/Service/BuildingService.php
+
 namespace App\Service;
-use DateTime; 
+
+use DateTime;
 use App\Entity\Building;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\BuildingRepository;
@@ -23,40 +25,41 @@ use App\Events\BuildingEvent;
 class BuildingService implements BuildingServiceInterface
 {
     public function __construct(
-            private EntityManagerInterface $em,
-            private BuildingRepository $buildingRepository,
-            private FormFactoryInterface $formFactory,
-            private ValidatorInterface $validator,
-            private EventDispatcherInterface $dispatcher,
-        ) {}
+        private EntityManagerInterface $em,
+        private BuildingRepository $buildingRepository,
+        private FormFactoryInterface $formFactory,
+        private ValidatorInterface $validator,
+        private EventDispatcherInterface $dispatcher,
+    ) {
+    }
 
-        // Serializes the object(s)
-        public function serializeJson($object)
-        {
+    // Serializes the object(s)
+    public function serializeJson($object)
+    {
         $encoders = new JsonEncoder();
         $defaultContext = [
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
-            return $object->getId(); // Ce qu'il doit retourner
+                return $object->getId(); // Ce qu'il doit retourner
             },
             ];
         $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
         return $serializer->serialize($object, 'json');
-        }
+    }
 
-        public function findAll(): array
-        {
-            // On en n'a plus besoin car la sérialisation est récursive
-            return $this->buildingRepository->findAll();
-        }
+    public function findAll(): array
+    {
+        // On en n'a plus besoin car la sérialisation est récursive
+        return $this->buildingRepository->findAll();
+    }
     // Creates the building
     public function create(string $data): Building
     {
         $building = new Building();
         $this->submit($building, BuildingType::class, $data);
         $building->setSlug((new Slugify())->slugify($building->getName()));
-        
-       
+
+
         $building->setIdentifier(hash('sha1', uniqid()));
         $building->setCreatedAt(new DateTime());
         $building->setUpdatedAt(new \DateTime());
@@ -68,7 +71,7 @@ class BuildingService implements BuildingServiceInterface
 
     public function update(Building $building, string $data): Building
     {
-        
+
         $this->submit($building, BuildingType::class, $data);
         $building->setSlug((new Slugify())->slugify($building->getName()));
         $building->setUpdatedAt(new \DateTime());
@@ -80,37 +83,46 @@ class BuildingService implements BuildingServiceInterface
         return $building;
     }
 
-    public function delete(Building $building)
+    public function delete(Building $building): void
     {
         $this->em->remove($building);
         $this->em->flush();
     }
 
-    public function submit(Building $building, $formName, $data)
-        {
+    public function submit(Building $building, $formName, $data): void
+    {
         $dataArray = is_array($data) ? $data : json_decode($data, true);
-        // Bad array
         if (null !== $data && !is_array($dataArray)) {
-        throw new UnprocessableEntityHttpException('Submitted data is not an array -> ' . $data);
+            throw new UnprocessableEntityHttpException('Submitted data is not an array -> ' . $data);
         }
-        // Submits form
         $form = $this->formFactory->create($formName, $building, ['csrf_protection' => false]);
         $form->submit($dataArray, false);
         $errors = $form->getErrors();
         foreach ($errors as $error) {
-        $errorMsg = 'Error ' . get_class($error->getCause());
-        $errorMsg .= ' --> ' . $error->getMessageTemplate();
-        $errorMsg .= ' ' . json_encode($error->getMessageParameters());
-        throw new LogicException($errorMsg);
+            $errorMsg = 'Error ' . get_class($error->getCause());
+            $errorMsg .= ' --> ' . $error->getMessageTemplate();
+            $errorMsg .= ' ' . json_encode($error->getMessageParameters());
+            throw new LogicException($errorMsg);
         }
     }
-    public function isEntityFilled(Building $building)
-        {
+    public function isEntityFilled(Building $building): void
+    {
         $errors = $this->validator->validate($building);
         if (count($errors) > 0) {
-            $errorMsg = (string) $errors . 'Wrong data for Entity -> ';
-            $errorMsg .= json_encode($this->serializeJson($building));
+            $errorMsg = 'Wrong data for Entity -> ';
+    
+            $errorMessages = [];
+            foreach ($errors as $error) {
+                $errorMessages[] = $error->getMessage();
+            }
+    
+            $errorMsg .= implode(', ', $errorMessages);
+    
+            $entityData = $this->serializeJson($building);
+            $errorMsg .= '. Entity Data: ' . json_encode($entityData);
+    
             throw new UnprocessableEntityHttpException($errorMsg);
         }
-        }
+    }
+    
 }

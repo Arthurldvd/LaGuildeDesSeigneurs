@@ -16,12 +16,12 @@ class Character
     #[ORM\Column]
     private ?int $id = 1;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, name:'gls_name')]
     #[Assert\NotNull] // Pour que ce ne soit pas null
     #[Assert\NotBlank] // Pour que ce ne soit pas blanc
     #[Assert\Length( //Définit une taille mini et maxi
-    min: 3,
-    max: 20, // Messages pour customisation, sinon on peut les supprimer
+        min: 3,
+        max: 20, // Messages pour customisation, sinon on peut les supprimer
     )]
     private ?string $name;
 
@@ -29,8 +29,8 @@ class Character
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-    min: 3,
-    max: 50, // 50 caractères
+        min: 3,
+        max: 50, // 50 caractères
     )]
     private ?string $surname;
 
@@ -38,13 +38,13 @@ class Character
     private ?string $caste = null;
 
     #[ORM\Column(length: 20, nullable: true)]
-     #[Assert\Length(
-         min: 3,
-         max: 20,
-         )]
+    #[Assert\Length(
+        min: 3,
+        max: 20,
+    )]
     private ?string $knowledge = null ;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_intelligence')]
     #[Assert\PositiveOrZero] // OU #[Assert\Positive] si on ne veut pas de 0
     private ?int $intelligence = null;
 
@@ -53,40 +53,40 @@ class Character
     private ?int $strength = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-     #[Assert\Length(
-         min: 5,
-         max: 50,
-         )]
+    #[Assert\Length(
+        min: 5,
+        max: 50,
+    )]
     private ?string $image = null;
 
     #[ORM\Column(length: 20)]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-    min: 3,
-    max: 20,
+        min: 3,
+        max: 20,
     )]
     private ?string $slug;
 
     #[ORM\Column(length: 20)]
-     #[Assert\NotNull]
+    #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-    min: 3,     
-    max: 20,
+        min: 3,
+        max: 20,
     )]
     private ?string $kind;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, name:'gls_creation')]
     private ?\DateTimeInterface $creation = null;
 
     #[ORM\Column(length: 40)]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-    min: 40, // si on veut une taille fixe il suffit
-    max: 40, // de mettre la même valeur pour min et max
-)]
+        min: 40, // si on veut une taille fixe il suffit
+        max: 40, // de mettre la même valeur pour min et max
+    )]
     private ?string $identifier = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

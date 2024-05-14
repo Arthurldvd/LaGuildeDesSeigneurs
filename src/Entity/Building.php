@@ -22,8 +22,8 @@ class Building
     #[Assert\NotNull] // Pour que ce ne soit pas null
     #[Assert\NotBlank] // Pour que ce ne soit pas blanc
     #[Assert\Length( //Définit une taille mini et maxi
-    min: 3,
-    max: 20, // Messages pour customisation, sinon on peut les supprimer
+        min: 3,
+        max: 20, // Messages pour customisation, sinon on peut les supprimer
     )]
     private ?string $name = null;
 
@@ -31,8 +31,8 @@ class Building
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-    min: 3,
-    max: 20,
+        min: 3,
+        max: 20,
     )]
     private ?string $slug = null;
 
@@ -47,7 +47,7 @@ class Building
     #[Assert\Length(
         min: 5,
         max: 50,
-        )]
+    )]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
@@ -55,11 +55,11 @@ class Building
 
     #[ORM\Column(length: 40)]
     #[Assert\NotNull]
-   #[Assert\NotBlank]
-   #[Assert\Length(
-   min: 40, // si on veut une taille fixe il suffit
-   max: 40, // de mettre la même valeur pour min et max
-)]
+    #[Assert\NotBlank]
+    #[Assert\Length(
+        min: 40, // si on veut une taille fixe il suffit
+        max: 40, // de mettre la même valeur pour min et max
+    )]
     private ?string $identifier = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]

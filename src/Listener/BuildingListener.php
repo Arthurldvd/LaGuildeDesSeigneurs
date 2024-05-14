@@ -1,5 +1,7 @@
 <?php
+
 // src/Listener/CharacterListener.php
+
 namespace App\Listener;
 
 use App\Events\BuildingEvent;
@@ -15,7 +17,7 @@ class BuildingListener implements EventSubscriberInterface
         );
     }
     // Méthode appelée lorsque l'objet est créé
-    public function buildingUpdated($event)
+    public function buildingUpdated($event): void
     {
         $building = $event->getBuilding();
         $building->setStrength(0);

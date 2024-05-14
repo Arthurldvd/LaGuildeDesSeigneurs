@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Service;
+
 use DateTime; // on ajoute le use pour supprimer le \ dans setCreation()
 use App\Entity\Character;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CharacterRepository;
-use function Symfony\Component\Clock\now;
 use App\Form\CharacterType;
 use LogicException;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -19,6 +20,8 @@ use Symfony\Component\Serializer\Serializer;
 use App\Events\CharacterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use function Symfony\Component\Clock\now;
+
 class CharacterService implements CharacterServiceInterface
 {
     public function __construct(
@@ -27,22 +30,23 @@ class CharacterService implements CharacterServiceInterface
         private FormFactoryInterface $formFactory,
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
-    ) {}
+    ) {
+    }
 
 
     // Serializes the objet(s)
- public function serializeJson($object)
- {
- $encoders = new JsonEncoder();
- $defaultContext = [
- AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
- return $object->getId();
- },
- ];
- $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
- $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
- return $serializer->serialize($object, 'json');
- }
+    public function serializeJson($object)
+    {
+        $encoders = new JsonEncoder();
+        $defaultContext = [
+        AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+            return $object->getId();
+        },
+        ];
+        $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
+        $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
+        return $serializer->serialize($object, 'json');
+    }
     public function create(string $data): Character
     {
         $character = new Character();
@@ -79,11 +83,6 @@ class CharacterService implements CharacterServiceInterface
 
     public function findAll(): array
     {
-        $charactersFinal = array();
-        $characters = $this->characterRepository->findAll();
-        foreach ($characters as $character) {
-            $charactersFinal[] = $character->toArray();
-        }
         return $this->characterRepository->findAll();
     }
 
@@ -93,17 +92,25 @@ class CharacterService implements CharacterServiceInterface
         $this->em->flush();
     }
 
-    public function isEntityFilled(Character $character)
+    public function isEntityFilled(Character $character): void
     {
         $errors = $this->validator->validate($character);
         if (count($errors) > 0) {
-            $errorMsg = (string) $errors . 'Wrong data for Entity -> ';
-            $errorMsg .= json_encode($this->serializeJson($character));
+            $errorMsg = 'Wrong data for Entity -> ';
+            
+            foreach ($errors as $error) {
+                $errorMsg .= $error->getMessage() . ', ';
+            }
+    
+            $errorMsg = rtrim($errorMsg, ', ');
+    
+            $entityData = $this->serializeJson($character);
+            $errorMsg .= '. Entity Data: ' . json_encode($entityData);
+    
             throw new UnprocessableEntityHttpException($errorMsg);
         }
     }
-
-    public function submit(Character $character, $formName, $data)
+    public function submit(Character $character, $formName, $data): void
     {
         $dataArray = is_array($data) ? $data : json_decode($data, true);
 

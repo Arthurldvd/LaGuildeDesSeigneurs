@@ -48,7 +48,7 @@ class CharacterControllerTest extends WebTestCase
         $this->assertJsonResponse();
         $this->assertIdentifier();
 
-        $this->assertJsonResponse($this->client->getResponse());
+        $this->assertJsonResponse();
     }
 
     public function assertJsonResponse()

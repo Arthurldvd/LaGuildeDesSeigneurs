@@ -14,10 +14,10 @@ use OpenApi\Attributes as OA;
 
 class BuildingController extends AbstractController
 {
-
     public function __construct(
         private BuildingServiceInterface $buildingService,
-    ) {}
+    ) {
+    }
 
     #[
         Route('/buildings/', name: 'app_building_create', methods: ['POST'])
@@ -92,10 +92,9 @@ class BuildingController extends AbstractController
     )]
     #[OA\Tag(name: 'Building')]
     public function display(
-         #[MapEntity(expr: 'repository.findOneByIdentifier(identifier)')]
-         Building $building
-    ): JsonResponse
-    {
+        #[MapEntity(expr: 'repository.findOneByIdentifier(identifier)')]
+        Building $building
+    ): JsonResponse {
         $this->denyAccessUnlessGranted('buildingDisplay', $building);
         return JsonResponse::fromJsonString($this->buildingService->serializeJson($building));
     }

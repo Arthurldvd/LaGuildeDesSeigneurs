@@ -47,7 +47,7 @@ class BuildingRepository extends ServiceEntityRepository
     //    }
 
     public function findOneByIdentifier(string $identifier): ?Building
-        {
+    {
         return $this->createQueryBuilder('p')
         ->select('p', 'c')
         ->leftJoin('p.characters', 'c')
@@ -56,5 +56,5 @@ class BuildingRepository extends ServiceEntityRepository
         ->getQuery()
         ->getOneOrNullResult()
         ;
-        }
+    }
 }

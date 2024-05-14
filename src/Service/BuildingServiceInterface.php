@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Service;
+
 use App\Entity\Building;
 
 interface BuildingServiceInterface
@@ -18,6 +20,6 @@ interface BuildingServiceInterface
     public function delete(Building $building);
 
     // Serializes the object(s)
-  public function serializeJson($object);
+    public function serializeJson($object);
 
 }

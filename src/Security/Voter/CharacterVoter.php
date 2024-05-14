@@ -8,7 +8,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use LogicException;
 use App\Entity\Character;
 
-
 class CharacterVoter extends Voter
 {
     public const CHARACTER_CREATE = 'characterCreate';
@@ -16,7 +15,7 @@ class CharacterVoter extends Voter
     public const CHARACTER_UPDATE = 'characterUpdate';
     public const CHARACTER_DELETE = 'characterDelete';
 
-   // Checks if is allowed to create
+    // Checks if is allowed to create
     private function canCreate($token, $subject)
     {
         return true;
@@ -28,22 +27,22 @@ class CharacterVoter extends Voter
         return true;
     }
     public const CHARACTER_DISPLAY = 'characterDisplay';
-        private const ATTRIBUTES = array(
-            self::CHARACTER_CREATE,
-            self::CHARACTER_DISPLAY,
-            self::CHARACTER_INDEX,
-            self::CHARACTER_UPDATE,
-            self::CHARACTER_DELETE,
+    private const ATTRIBUTES = array(
+        self::CHARACTER_CREATE,
+        self::CHARACTER_DISPLAY,
+        self::CHARACTER_INDEX,
+        self::CHARACTER_UPDATE,
+        self::CHARACTER_DELETE,
 
-        );
+    );
 
 
     protected function supports(string $attribute, mixed $subject): bool
     {
-         if (null !== $subject) {
-                 return $subject instanceof Character && in_array($attribute, self::ATTRIBUTES);
-             }
-             return in_array($attribute, self::ATTRIBUTES);
+        if (null !== $subject) {
+            return $subject instanceof Character && in_array($attribute, self::ATTRIBUTES);
+        }
+        return in_array($attribute, self::ATTRIBUTES);
     }
 
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
@@ -51,19 +50,14 @@ class CharacterVoter extends Voter
         switch ($attribute) {
             case self::CHARACTER_CREATE:
                 return $this->canCreate($token, $subject);
-                break;
             case self::CHARACTER_DISPLAY:
                 return $this->canDisplay($token, $subject);
-                break;
             case self::CHARACTER_INDEX:
                 return $this->canDisplay($token, $subject);
-                break;
             case self::CHARACTER_UPDATE:
                 return $this->canUpdate($token, $subject);
-                break;
             case self::CHARACTER_DELETE:
-                return $this->canUpdate($token, $subject);
-                break;
+                return $this->canDelete($token, $subject);
         }
 
         throw new LogicException('Invalid attribute: ' . $attribute);
@@ -75,8 +69,8 @@ class CharacterVoter extends Voter
         return true;
     }
 
-   private function canDelete($token, $subject)
-   {
-       return true;
-   }
+    private function canDelete($token, $subject)
+    {
+        return true;
+    }
 }

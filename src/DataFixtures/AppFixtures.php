@@ -19,7 +19,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         // Creates All the Characters from json
-        
+
         $characters = json_decode(file_get_contents('https://la-guilde-des-seigneurs.com/json/characters.json'), true);
         foreach ($characters as $characterData) {
             $manager->persist($this->setCharacter($characterData));
