@@ -57,3 +57,14 @@ V 0.10
 - Mise en place de Form pour Character
 
 - Core files
+
+v0.11
+✓Mise en place de Form pour Building
+
+v0.15.1
+✓Corrections code
+✓Décorrélation BDD/API
+
+v0.16
+✓Mise en place de la pagination
+

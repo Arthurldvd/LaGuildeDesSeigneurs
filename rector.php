@@ -11,7 +11,6 @@ return RectorConfig::configure()
         __DIR__ . '/public',
         __DIR__ . '/src',
         __DIR__ . '/tests',
-        __DIR__ . '/tools',
     ])
     ->withSets([
          SymfonySetList::SYMFONY_64, // https://github.com/rectorphp/rector-symfony/tree/main/config/sets/symfony

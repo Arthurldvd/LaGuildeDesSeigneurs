@@ -21,6 +21,9 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Events\BuildingEvent;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\PaginatorInterface;
+use \Knp\Component\Pager\Pagination\PaginationInterface;
 
 class BuildingService implements BuildingServiceInterface
 {
@@ -30,6 +33,8 @@ class BuildingService implements BuildingServiceInterface
         private FormFactoryInterface $formFactory,
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
+        private PaginatorInterface $paginator,
+
     ) {
     }
 
@@ -41,7 +46,7 @@ class BuildingService implements BuildingServiceInterface
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
                 return $object->getId(); // Ce qu'il doit retourner
             },
-            ];
+        ];
         $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
         return $serializer->serialize($object, 'json');
@@ -110,19 +115,28 @@ class BuildingService implements BuildingServiceInterface
         $errors = $this->validator->validate($building);
         if (count($errors) > 0) {
             $errorMsg = 'Wrong data for Entity -> ';
-    
+
             $errorMessages = [];
             foreach ($errors as $error) {
                 $errorMessages[] = $error->getMessage();
             }
-    
+
             $errorMsg .= implode(', ', $errorMessages);
-    
+
             $entityData = $this->serializeJson($building);
             $errorMsg .= '. Entity Data: ' . json_encode($entityData);
-    
+
             throw new UnprocessableEntityHttpException($errorMsg);
         }
     }
-    
+
+    // Finds all buildings paginated
+    public function findAllPaginated($query): PaginationInterface
+    {
+        return $this->paginator->paginate(
+            $this->findAll(),
+            $query->getInt('page', 1),
+            min(100, $query->getInt('size', 10))
+        );
+    }
 }

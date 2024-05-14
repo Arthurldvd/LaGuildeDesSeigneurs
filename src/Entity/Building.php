@@ -18,16 +18,16 @@ class Building
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 50)]
-    #[Assert\NotNull] // Pour que ce ne soit pas null
-    #[Assert\NotBlank] // Pour que ce ne soit pas blanc
-    #[Assert\Length( //Définit une taille mini et maxi
+    #[ORM\Column(length: 50, name:'gls_name')]
+    #[Assert\NotNull] 
+    #[Assert\NotBlank] 
+    #[Assert\Length(
         min: 3,
-        max: 20, // Messages pour customisation, sinon on peut les supprimer
+        max: 20, 
     )]
     private ?string $name = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, name:'gls_slug')]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
@@ -36,40 +36,40 @@ class Building
     )]
     private ?string $slug = null;
 
-    #[ORM\Column(length: 40, nullable: true)]
+    #[ORM\Column(length: 40, nullable: true, name:'gls_caste')]
     private ?string $caste = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_strength')]
     #[Assert\PositiveOrZero]
     private ?int $strength = null;
 
-    #[ORM\Column(length: 100, nullable: true)]
+    #[ORM\Column(length: 100, nullable: true, name:'gls_image')]
     #[Assert\Length(
         min: 5,
         max: 50,
     )]
     private ?string $image = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
+    #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_note')]
     private ?int $note = null;
 
-    #[ORM\Column(length: 40)]
+    #[ORM\Column(length: 40, name:'gls_identifier')]
     #[Assert\NotNull]
     #[Assert\NotBlank]
     #[Assert\Length(
-        min: 40, // si on veut une taille fixe il suffit
-        max: 40, // de mettre la même valeur pour min et max
+        min: 40,
+        max: 40, 
     )]
     private ?string $identifier = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name:'gls_created_at')]
     private ?\DateTimeInterface $created_at = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name:'gls_updated_at')]
     private ?\DateTimeInterface $updated_at = null;
 
     /**
-     * @var Collection<int, Character>
+     * @var Collection<int, Character>s
      */
     #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'building')]
     private Collection $characters;

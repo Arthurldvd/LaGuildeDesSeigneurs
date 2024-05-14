@@ -19,6 +19,8 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use App\Events\CharacterEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
+use Knp\Component\Pager\PaginatorInterface;
 
 use function Symfony\Component\Clock\now;
 
@@ -30,6 +32,7 @@ class CharacterService implements CharacterServiceInterface
         private FormFactoryInterface $formFactory,
         private ValidatorInterface $validator,
         private EventDispatcherInterface $dispatcher,
+        private PaginatorInterface $paginator,
     ) {
     }
 
@@ -39,9 +42,9 @@ class CharacterService implements CharacterServiceInterface
     {
         $encoders = new JsonEncoder();
         $defaultContext = [
-        AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
-            return $object->getId();
-        },
+            AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId();
+            },
         ];
         $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
@@ -97,16 +100,16 @@ class CharacterService implements CharacterServiceInterface
         $errors = $this->validator->validate($character);
         if (count($errors) > 0) {
             $errorMsg = 'Wrong data for Entity -> ';
-            
+
             foreach ($errors as $error) {
                 $errorMsg .= $error->getMessage() . ', ';
             }
-    
+
             $errorMsg = rtrim($errorMsg, ', ');
-    
+
             $entityData = $this->serializeJson($character);
             $errorMsg .= '. Entity Data: ' . json_encode($entityData);
-    
+
             throw new UnprocessableEntityHttpException($errorMsg);
         }
     }
@@ -123,10 +126,18 @@ class CharacterService implements CharacterServiceInterface
 
         $errors = $form->getErrors();
         foreach ($errors as $error) {
-            $errorMsg  = 'Error ' . get_class($error->getCause());
+            $errorMsg = 'Error ' . get_class($error->getCause());
             $errorMsg .= ' --> ' . $error->getMessageTemplate();
             $errorMsg .= ' ' . json_encode($error->getMessageParameters());
             throw new LogicException($errorMsg);
         }
+    }
+    public function findAllPaginated($query): \Knp\Component\Pager\Pagination\PaginationInterface
+    {
+        return $this->paginator->paginate(
+            $this->findAll(), // On appelle la même requête
+            $query->getInt('page', 1), // 1 par défaut
+            min(100, $query->getInt('size', 10)) // 10 par défaut et 100 maximum
+        );
     }
 }

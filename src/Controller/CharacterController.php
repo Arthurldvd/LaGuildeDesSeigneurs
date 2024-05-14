@@ -33,10 +33,25 @@ class CharacterController extends AbstractController
         response: 403,
         description: 'Access denied'
     )]
+    #[OA\Parameter(
+        name: 'page',
+        in: 'path',
+        description: 'Number of the page',
+        schema: new OA\Schema(type: 'integer', default: 1),
+        required: true
+        )]
+        #[OA\Parameter(
+        name: 'size',
+        in: 'path',
+        description: 'Number of records',
+        schema: new OA\Schema(type: 'integer', default: 10, minimum: 1, maximum: 100),
+        required: true
+        )]
     #[OA\Tag(name: 'Character')]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return JsonResponse::fromJsonString($this->characterService->findAllJson());
+        $characters = $this->characterService->findAllPaginated($request->query);
+        return JsonResponse::fromJsonString($this->characterService->serializeJson($characters));
     }
     #[
         Route(

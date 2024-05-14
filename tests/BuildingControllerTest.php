@@ -56,7 +56,20 @@ class BuildingControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
+         // Tests with default values
         $this->client->request('GET', '/buildings/');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+        // Tests with page
+        $this->client->request('GET', '/buildings/?page=1');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+        // Tests with page and size
+        $this->client->request('GET', '/buildings/?page=1&size=1');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+        // Tests with size
+        $this->client->request('GET', '/buildings/?size=1');
         $this->assertResponseCode(200);
         $this->assertJsonResponse();
     }

@@ -115,7 +115,7 @@ class BuildingController extends AbstractController
         description: 'Access denied'
     )]
     #[OA\Tag(name: 'Building')]
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $this->denyAccessUnlessGranted('buildingIndex', null);
         $buildings = $this->buildingService->findAll();
