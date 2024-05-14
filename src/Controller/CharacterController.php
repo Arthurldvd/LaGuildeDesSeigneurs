@@ -219,6 +219,7 @@ class CharacterController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+
     public function __construct(
         private CharacterServiceInterface $characterService
     ) {

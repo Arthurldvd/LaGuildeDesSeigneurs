@@ -28,4 +28,5 @@ interface CharacterServiceInterface
     // Finds all the characters paginated
     public function findAllPaginated($query);
 
+    public function setLinks($object);
 }

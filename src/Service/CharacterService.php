@@ -48,6 +48,7 @@ class CharacterService implements CharacterServiceInterface
         ];
         $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
+        $this->setLinks($object);
         return $serializer->serialize($object, 'json');
     }
     public function create(string $data): Character
@@ -140,4 +141,16 @@ class CharacterService implements CharacterServiceInterface
             min(100, $query->getInt('size', 10)) // 10 par défaut et 100 maximum
         );
     }
+
+    
+    public function setLinks($object)
+        {
+            if($object instanceof SlidingPagination) {
+             // Si oui, on boucle sur les items
+             foreach ($object->getItems() as $item) {
+                $this->setLinks($item);
+             }
+             return;
+             }
+        }
 }

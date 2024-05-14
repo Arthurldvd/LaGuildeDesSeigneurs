@@ -22,4 +22,5 @@ interface BuildingServiceInterface
     // Serializes the object(s)
     public function serializeJson($object);
 
+    public function setLinks($object);
 }

@@ -70,3 +70,6 @@ v0.16
 
 v0.16.1
 ✓Mise en place du cache
+
+v0.17
+Mise en place de HateOAS

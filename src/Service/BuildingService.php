@@ -21,9 +21,9 @@ use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use App\Events\BuildingEvent;
+use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Bundle\PaginatorBundle\Pagination\SlidingPagination;
 use Knp\Component\Pager\PaginatorInterface;
-use \Knp\Component\Pager\Pagination\PaginationInterface;
 
 class BuildingService implements BuildingServiceInterface
 {
@@ -49,6 +49,7 @@ class BuildingService implements BuildingServiceInterface
         ];
         $normalizers = new ObjectNormalizer(null, null, null, null, null, null, $defaultContext);
         $serializer = new Serializer([new DateTimeNormalizer(), $normalizers], [$encoders]);
+        $this->setLinks($object);
         return $serializer->serialize($object, 'json');
     }
 
@@ -138,5 +139,16 @@ class BuildingService implements BuildingServiceInterface
             $query->getInt('page', 1),
             min(100, $query->getInt('size', 10))
         );
+    }
+
+    public function setLinks($object)
+    {
+        // Teste si l'objet est une pagination
+        if ($object instanceof SlidingPagination) {
+            foreach ($object->getItems() as $item) {
+                $this->setLinks($item);
+            }
+            return;
+        }
     }
 }
