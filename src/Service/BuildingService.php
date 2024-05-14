@@ -17,6 +17,8 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use App\Events\BuildingEvent;
 
 class BuildingService implements BuildingServiceInterface
 {
@@ -25,6 +27,7 @@ class BuildingService implements BuildingServiceInterface
             private BuildingRepository $buildingRepository,
             private FormFactoryInterface $formFactory,
             private ValidatorInterface $validator,
+            private EventDispatcherInterface $dispatcher,
         ) {}
 
         // Serializes the object(s)
@@ -65,10 +68,13 @@ class BuildingService implements BuildingServiceInterface
 
     public function update(Building $building, string $data): Building
     {
+        
         $this->submit($building, BuildingType::class, $data);
         $building->setSlug((new Slugify())->slugify($building->getName()));
         $building->setUpdatedAt(new \DateTime());
         $building->setUpdatedAt(new \DateTime());
+        $event = new BuildingEvent($building);
+        $this->dispatcher->dispatch($event, BuildingEvent::BUILDING_UPDATED);
         $this->em->persist($building);
         $this->em->flush();
         return $building;
