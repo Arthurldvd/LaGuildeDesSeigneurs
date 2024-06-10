@@ -16,6 +16,7 @@ class Building
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['building', 'character'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 50, name:'gls_name')]
@@ -25,6 +26,7 @@ class Building
         min: 3,
         max: 20, 
     )]
+    #[Groups(['building'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 20, name:'gls_slug')]
@@ -34,13 +36,16 @@ class Building
         min: 3,
         max: 20,
     )]
+    #[Groups(['building'])]
     private ?string $slug = null;
 
     #[ORM\Column(length: 40, nullable: true, name:'gls_caste')]
+    #[Groups(['building'])]
     private ?string $caste = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_strength')]
     #[Assert\PositiveOrZero]
+    #[Groups(['building'])]
     private ?int $strength = null;
 
     #[ORM\Column(length: 100, nullable: true, name:'gls_image')]
@@ -48,9 +53,11 @@ class Building
         min: 5,
         max: 50,
     )]
+    #[Groups(['building'])]
     private ?string $image = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_note')]
+    #[Groups(['building'])]
     private ?int $note = null;
 
     #[ORM\Column(length: 40, name:'gls_identifier')]
@@ -60,20 +67,25 @@ class Building
         min: 40,
         max: 40, 
     )]
+    #[Groups(['building', 'character'])]
     private ?string $identifier = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name:'gls_created_at')]
+    #[Groups(['building'])]
     private ?\DateTimeInterface $created_at = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name:'gls_updated_at')]
+    #[Groups(['building'])]
     private ?\DateTimeInterface $updated_at = null;
 
     /**
      * @var Collection<int, Character>s
      */
     #[ORM\OneToMany(targetEntity: Character::class, mappedBy: 'building')]
+    #[Groups(['building'])]
     private Collection $characters;
 
+    #[Groups(['building'])]
     private array $_links = [];
 
     public function __construct()

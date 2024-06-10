@@ -6,6 +6,7 @@ use App\Repository\CharacterRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: CharacterRepository::class)]
 #[ORM\Table(name: '`character`')]
@@ -14,6 +15,7 @@ class Character
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['character', 'building'])]
     private ?int $id = 1;
 
     #[ORM\Column(length: 20, name:'gls_name')]
@@ -23,6 +25,7 @@ class Character
         min: 3,
         max: 20, 
     )]
+    #[Groups(['character'])]
     private ?string $name;
 
     #[ORM\Column(length: 50, name:'gls_surname')]
@@ -32,9 +35,11 @@ class Character
         min: 3,
         max: 50, 
     )]
+    #[Groups(['character'])]
     private ?string $surname;
 
     #[ORM\Column(length: 20, nullable: true, name:'gls_caste')]
+    #[Groups(['character'])]
     private ?string $caste = null;
 
     #[ORM\Column(length: 20, nullable: true, name:'gls_knowledge')]
@@ -42,14 +47,17 @@ class Character
         min: 3,
         max: 20,
     )]
+    #[Groups(['character'])]
     private ?string $knowledge = null ;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_intelligence')]
     #[Assert\PositiveOrZero]
+    #[Groups(['character'])]
     private ?int $intelligence = null;
 
     #[ORM\Column(type: Types::SMALLINT, nullable: true, name:'gls_strength')]
     #[Assert\PositiveOrZero]
+    #[Groups(['character'])]
     private ?int $strength = null;
 
     #[ORM\Column(length: 50, nullable: true, name:'gls_image')]
@@ -57,6 +65,7 @@ class Character
         min: 5,
         max: 50,
     )]
+    #[Groups(['character'])]
     private ?string $image = null;
 
     #[ORM\Column(length: 20, name:'gls_slug')]
@@ -66,6 +75,7 @@ class Character
         min: 3,
         max: 20,
     )]
+    #[Groups(['character'])]
     private ?string $slug;
 
     #[ORM\Column(length: 20, name:'gls_kind')]
@@ -75,9 +85,11 @@ class Character
         min: 3,
         max: 20,
     )]
+    #[Groups(['character'])]
     private ?string $kind;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, name:'gls_creation')]
+    #[Groups(['character'])]
     private ?\DateTimeInterface $creation = null;
 
     #[ORM\Column(length: 40, name:'gls_identifier')]
@@ -87,17 +99,22 @@ class Character
         min: 40,
         max: 40, 
     )]
+    #[Groups(['character', 'building'])]
     private ?string $identifier = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true, name:'gls_modification')]
+    #[Groups(['character'])]
     private ?\DateTimeInterface $modification = null;
 
     #[ORM\ManyToOne(inversedBy: 'characters')]
+    #[Groups(['character'])]
     private ?Building $building = null;
 
+    #[Groups(['character'])]
     private array $_links = [];
 
     #[ORM\ManyToOne(inversedBy: 'characters')]
+    #[Groups(['character'])]
     private ?User $user = null;
 
     public function getId(): ?int
