@@ -31,6 +31,7 @@ class CharacterType extends AbstractType
             ->add('modification', DateTimeType::class, [
                 'widget' => 'single_text',
             ])
+            ->add('user')
         ;
     }
 

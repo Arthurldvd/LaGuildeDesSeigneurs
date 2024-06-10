@@ -13,7 +13,6 @@ use Nelmio\ApiDocBundle\Annotation\Model;
 use OpenApi\Attributes as OA;
 use Symfony\Component\HttpKernel\Attribute\Cache;
 
-
 class BuildingController extends AbstractController
 {
     public function __construct(

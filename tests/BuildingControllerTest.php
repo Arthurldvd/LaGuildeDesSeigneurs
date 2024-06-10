@@ -6,16 +6,16 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class BuildingControllerTest extends WebTestCase
 {
-    private $content; // Contenu de la rÃ©ponse
+    private $content; // Contenu de la réponse
     private static $identifier; // Identifier du Building
     private $client;
     public function setUp(): void
     {
         $this->client = static::createClient();
     }
-    public function testCreate()
+    public function testCreate(): void
     {
-         $this->client->request(
+        $this->client->request(
             'POST',
             '/buildings/',
             array(),// Parameters
@@ -23,10 +23,10 @@ class BuildingControllerTest extends WebTestCase
             array('CONTENT_TYPE' => 'application/json'),// Server
             <<<JSON
             {
-            "name": "Château Silken",
-            "caste": "Archer",
-            "image": "/buildings/chateau-silken.webp",
-            "strength": 1200
+                "name": "Château Silken",
+                "caste": "Archer",
+                "image": "/buildings/chateau-silken.webp",
+                "strength": 1200
             }
             JSON
             );
@@ -56,7 +56,23 @@ class BuildingControllerTest extends WebTestCase
 
     public function testIndex(): void
     {
+        // Tests with default values
         $this->client->request('GET', '/buildings/');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+
+        // Tests with page
+        $this->client->request('GET', '/buildings/?page=1');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+
+        // Tests with page and size
+        $this->client->request('GET', '/buildings/?page=1&size=1');
+        $this->assertResponseCode(200);
+        $this->assertJsonResponse();
+
+        // Tests with size
+        $this->client->request('GET', '/buildings/?size=1');
         $this->assertResponseCode(200);
         $this->assertJsonResponse();
     }
@@ -79,44 +95,55 @@ class BuildingControllerTest extends WebTestCase
         $this->assertError404();
     }
 
-    public function assertIdentifier()
+    public function assertIdentifier(): void
     {
         $this->assertArrayHasKey('identifier', $this->content);
     }
     // Defines identifier
-    public function defineIdentifier()
+    public function defineIdentifier(): void
     {
         self::$identifier = $this->content['identifier'];
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-       // Tests partial content
- $this->client->request(
-    'PUT',
-    '/buildings/' . self::$identifier,
-    array(),// Parameters
-    array(),// Files
-    array('CONTENT_TYPE' => 'application/json'),// Server
-    <<<JSON
-    {
-    "name": "Château Oakenfield",
-    "caste": "Erudit"
-    }
-    JSON
-    );
+        $this->client->request(
+            'PUT',
+            '/buildings/' . self::$identifier,
+            array(),// Parameters
+            array(),// Files
+            array('CONTENT_TYPE' => 'application/json'),// Server
+            <<<JSON
+            {
+                "name": "Château Oakenfield",
+                "caste": "Erudit",
+                "image": "/buildings/chateau-oakenfield.webp",
+                "strength": 2000
+            }
+            JSON
+            );
         $this->assertResponseCode(204);
     }
     // Asserts that Response code is equal to $code
-    public function assertResponseCode(int $code)
+    public function assertResponseCode(int $code): void
     {
         $response = $this->client->getResponse();
         $this->assertEquals($code, $response->getStatusCode());
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->client->request('DELETE', '/buildings/' . self::$identifier);
         $this->assertResponseCode(204);
+    }
+
+    // Tests images
+    public function testImages()
+    {
+        //Tests without kind
+        $this->client->request('GET', '/buildings/images');
+        $this->assertJsonResponse();
+        $this->client->request('GET', '/buildings/images/3');
+        $this->assertJsonResponse();
     }
 }
