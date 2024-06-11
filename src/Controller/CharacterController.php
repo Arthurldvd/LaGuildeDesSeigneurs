@@ -219,6 +219,40 @@ class CharacterController extends AbstractController
         return new JsonResponse(null, JsonResponse::HTTP_NO_CONTENT);
     }
 
+    #[
+        Route(
+            '/characters/intelligence/{intelligence}',
+            name: 'app_character_intelligence',
+            methods: ['GET'],
+            requirements: ['intelligence' => '\d+']
+        )
+    ]
+    #[OA\Response(
+        response: 200,
+        description: 'Renvoie un tableau de Character avec intelligence supérieur à un certain chiffre',
+        content: new OA\JsonContent(
+            type: 'array',
+            items: new OA\Items(ref: new Model(type: Character::class))
+        )
+    )]
+    #[OA\Response(
+        response: 403,
+        description: 'Access denied'
+    )]
+    #[OA\Parameter(
+        name: 'intelligence',
+        in: 'path',
+        description: 'filtre sur l intelligence',
+        schema: new OA\Schema(type: 'integer', minimum: 0),
+        required: true
+    )]
+    #[OA\Tag(name: 'Character')]
+    #[Cache(public: true, maxage: 3600, mustRevalidate: true)]
+    public function intelligence(int $intelligence): JsonResponse
+    {
+        $characters = $this->characterService->findByIntelligence($intelligence);
+        return JsonResponse::fromJsonString($this->characterService->serializeJson($characters));
+    }
 
     public function __construct(
         private CharacterServiceInterface $characterService

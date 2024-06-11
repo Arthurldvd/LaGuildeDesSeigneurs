@@ -149,6 +149,11 @@ class CharacterService implements CharacterServiceInterface
         );
     }
 
+    public function findByIntelligence(int $intelligence): array
+    {
+        return $this->characterRepository->findByIntelligence($intelligence);
+    }
+
     
     public function setLinks($object)
         {
@@ -159,5 +164,11 @@ class CharacterService implements CharacterServiceInterface
              }
              return;
              }
+             if (is_array($object)) {
+                 foreach ($object as $item) {
+                 $this->setLinks($item);
+                 }
+                 return;
+                 }
         }
 }

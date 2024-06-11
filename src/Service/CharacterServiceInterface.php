@@ -25,6 +25,7 @@ interface CharacterServiceInterface
 
     public function serializeJson($object);
 
+    public function findByIntelligence(int $intelligence);
     // Finds all the characters paginated
     public function findAllPaginated($query);
 
